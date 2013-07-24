@@ -94,7 +94,7 @@ abstract class PageElement
 
 	protected function accessing()
 	{
-		if (($requiredPresenter = $this->getElementPresenter()) && !$this->isPresenter($requiredPresenter)) {
+		if (($requiredPresenter = $this->getElementPresenter()) !== ':' && !$this->isPresenter($requiredPresenter)) {
 			$appRequest = $this->session->presenter();
 			$currentPresenter = $appRequest->getPresenterName() . ':' . $appRequest->parameters['action'];
 
