@@ -111,7 +111,7 @@ abstract class SeleniumTestCase extends TestCase
 		$this->httpServer = new HttpServer();
 		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), array(
 			$this->options[self::OPTION_ENV_PREFIX] . '_DEBUG' => '0',
-			$this->options[self::OPTION_ENV_PREFIX] . '_SELENIUM' => TRUE,
+			$this->options[self::OPTION_ENV_PREFIX] . '_SELENIUM' => '1',
 			$this->options[self::OPTION_ENV_PREFIX] . '_DATABASE' => $this->createDatabase($this->serviceLocator),
 			$this->options[self::OPTION_ENV_PREFIX] . '_LOG_DIR' => TEMP_DIR,
 			$this->options[self::OPTION_ENV_PREFIX] . '_TEMP_DIR' => TEMP_DIR,
