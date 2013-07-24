@@ -129,7 +129,8 @@ class HttpServer
 			$pPid = $status['pid'];
 
 			//use ps to get all the children of this process, and kill them
-			foreach (array_filter(preg_split('/\s+/', `ps -o pid --no-heading --ppid $pPid`)) as $pid) {
+			$cmd = PHP_OS === 'Darwin' ? "ps -o pid,ppid | grep -e ' $pPid$'" : "ps -o pid --no-heading --ppid $pPid";
+			foreach (array_filter(preg_split('/\s+/', `$cmd`)) as $pid) {
 				if (is_numeric($pid)) {
 					posix_kill($pid, 9); // SIGKILL signal
 				}
@@ -137,6 +138,7 @@ class HttpServer
 		}
 
 		fclose($this->pipes[0]);
+		if ($status['running']) proc_terminate($this->process, 9); // SIGKILL
 		proc_close($this->process);
 
 		$this->process = NULL;
