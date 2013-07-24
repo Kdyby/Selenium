@@ -49,6 +49,15 @@ abstract class PageElement
 	}
 
 
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return Nette\Reflection\ClassType::from($this)->getAnnotation('Name');
+	}
+
+
 
 	private function getElementPresenter()
 	{
