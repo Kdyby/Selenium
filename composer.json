@@ -17,7 +17,7 @@
 	],
 	"support": {
 		"email": "filip@prochazka.su",
-		"issues": "https://github.com/kdyby/curl/issues"
+		"issues": "https://github.com/kdyby/selenium/issues"
 	},
 	"require": {
 		"ext-curl": "*"
