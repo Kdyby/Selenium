@@ -8,6 +8,7 @@ Requirements
 Kdyby/Selenium requires PHP 5.3.2 or higher.
 
 - [Nette Tester](https://github.com/nette/tester)
+- Latest stable Java
 - [Selenium server standalone](https://code.google.com/p/selenium/downloads/list?can=2&q=)
 
 
