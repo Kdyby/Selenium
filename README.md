@@ -23,4 +23,4 @@ $ composer require kdyby/selenium:@dev
 
 -----
 
-Homepage [http://www.kdyby.org](http://www.kdyby.org) and repository [http://github.com/kdyby/Selenium](http://github.com/kdyby/Selenium).
+Homepage [http://www.kdyby.org](http://www.kdyby.org) and repository [http://github.com/kdyby/selenium](http://github.com/kdyby/selenium).
