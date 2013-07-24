@@ -237,6 +237,41 @@ abstract class PageElement
 	}
 
 
+	public function clearForm(\PHPUnit_Extensions_Selenium2TestCase_Element $form, array $inputs)
+	{
+		foreach ($inputs as $name) {
+			/** @var \PHPUnit_Extensions_Selenium2TestCase_Element $element */
+			$element = $form->byName($name);
+
+			if (($tagName = strtolower($element->name())) === 'input') {
+				if (($type = strtolower($element->attribute('type'))) === 'checkbox') {
+					if ($element->selected()) {
+						if (!$this->tryClickOnLabel($form, $type, $name)) {
+							$element->click();
+						}
+					}
+
+				} elseif ($type === 'radio') {
+					// TODO
+					throw new Nette\NotImplementedException;
+
+				} else {
+					$element->clear();
+				}
+
+			} elseif ($tagName === 'textarea') {
+				$element->clear();
+
+			} elseif ($tagName === 'select') {
+				// TODO
+				throw new Nette\NotImplementedException;
+			}
+		}
+
+		return $form;
+	}
+
+
 
 	private function tryClickOnLabel(\PHPUnit_Extensions_Selenium2TestCase_Element $form, $type, $name, $value = NULL)
 	{
