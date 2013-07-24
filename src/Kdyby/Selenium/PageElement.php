@@ -319,4 +319,18 @@ abstract class PageElement
 		return new \PHPUnit_Extensions_Selenium2TestCase_ElementCriteria($strategy);
 	}
 
+
+
+	/**
+	 * Get a named component from this page
+	 *
+	 * @param string $name
+	 * @return ComponentElement
+	 */
+	public function tryFindComponent($name)
+	{
+		// override this
+		return NULL;
+	}
+
 }
