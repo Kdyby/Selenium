@@ -18,7 +18,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-abstract class PageElement extends Nette\Object
+abstract class PageElement
 {
 
 	/**
@@ -52,7 +52,7 @@ abstract class PageElement extends Nette\Object
 
 	private function getElementPresenter()
 	{
-		return ':' . ltrim($this->getReflection()->getAnnotation('Presenter'), ':');
+		return ':' . ltrim(Nette\Reflection\ClassType::from($this)->getAnnotation('Presenter'), ':');
 	}
 
 

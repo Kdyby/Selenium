@@ -106,11 +106,13 @@ abstract class SeleniumTestCase extends TestCase
 		$this->waitForSeleniumSlot();
 
 		$this->serviceLocator = $this->createContainer();
+		TesterHelpers::setup(); // ensure error & exception helpers are registered
+
 		$this->httpServer = new HttpServer();
 		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), array(
 			$this->options[self::OPTION_ENV_PREFIX] . '_DEBUG' => '0',
 			$this->options[self::OPTION_ENV_PREFIX] . '_SELENIUM' => TRUE,
-			$this->options[self::OPTION_ENV_PREFIX] . '_DATABASE' => $this->createDatabase(),
+			$this->options[self::OPTION_ENV_PREFIX] . '_DATABASE' => $this->createDatabase($this->serviceLocator),
 			$this->options[self::OPTION_ENV_PREFIX] . '_LOG_DIR' => TEMP_DIR,
 			$this->options[self::OPTION_ENV_PREFIX] . '_TEMP_DIR' => TEMP_DIR,
 		));
@@ -127,8 +129,10 @@ abstract class SeleniumTestCase extends TestCase
 
 	/**
 	 * This method should create testing database and return it's name.
+	 *
+	 * @param Nette\DI\Container $container
 	 */
-	protected function createDatabase()
+	protected function createDatabase(Nette\DI\Container $container)
 	{
 
 	}
@@ -200,10 +204,8 @@ abstract class SeleniumTestCase extends TestCase
 	{
 		$configurator = new Nette\Config\Configurator();
 		$configurator->setTempDirectory(TEMP_DIR);
-		$container = $configurator->createContainer();
-		TesterHelpers::setup();
 
-		return $container;
+		return $configurator->createContainer();
 	}
 
 
