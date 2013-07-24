@@ -20,3 +20,22 @@ interface Exception
 
 }
 
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class UnexpectedPresenterException extends \RuntimeException implements Exception
+{
+
+}
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class HttpServerException extends \RuntimeException implements Exception
+{
+
+}

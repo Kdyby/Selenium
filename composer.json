@@ -20,7 +20,8 @@
 		"issues": "https://github.com/kdyby/selenium/issues"
 	},
 	"require": {
-		"ext-curl": "*"
+		"ext-curl": "*",
+		"nette/nette": "*"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
@@ -33,6 +34,9 @@
 		},
 		"classmap": [
 			"src/Kdyby/Selenium/exceptions.php"
+		],
+		"files": [
+			"src/Kdyby/Selenium/functions.php"
 		]
 	}
 }
