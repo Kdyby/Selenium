@@ -1,0 +1,38 @@
+{
+	"name": "kdyby/selenium",
+	"type": "library",
+	"description": "Selenium integration for Nette Tester",
+	"keywords": ["nette", "tester", "selenium", "bdd"],
+	"homepage": "http://kdyby.org",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Filip Procházka",
+			"homepage": "http://filip-prochazka.com"
+		},
+		{
+			"name": "Jan Doleček",
+			"homepage": "http://juzna.cz"
+		}
+	],
+	"support": {
+		"email": "filip@prochazka.su",
+		"issues": "https://github.com/kdyby/curl/issues"
+	},
+	"require": {
+		"ext-curl": "*"
+	},
+	"require-dev": {
+		"nette/tester": "@dev",
+		"phpunit/phpunit-selenium": "~1.3",
+		"behat/behat": "@stable"
+	},
+	"autoload": {
+		"psr-0": {
+			"Kdyby\\Selenium": "src/"
+		},
+		"classmap": [
+			"src/Kdyby/Selenium/exceptions.php"
+		]
+	}
+}
