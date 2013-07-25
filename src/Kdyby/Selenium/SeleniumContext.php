@@ -31,6 +31,7 @@ class SeleniumContext extends Nette\Object
 	const OPTION_ROUTER = 'routerPath';
 	const OPTION_ENV_PREFIX = 'KDYBY';
 	const OPTION_ENV_VARIABLES = 'environmentVariables';
+	const OPTION_VIDEO_ENABLE = 'videoEnable';
 
 	/**
 	 * @var HttpServer
@@ -57,6 +58,9 @@ class SeleniumContext extends Nette\Object
 	 */
 	private $windows = array();
 
+	/** @var VideoRecorder */
+	private $videoRecorder;
+
 	/**
 	 * @var array
 	 */
@@ -66,6 +70,7 @@ class SeleniumContext extends Nette\Object
 		self::OPTION_ROUTER => '%wwwDir%/index.php',
 		self::OPTION_ENV_PREFIX => 'KDYBY',
 		self::OPTION_ENV_VARIABLES => array(),
+		self::OPTION_VIDEO_ENABLE => FALSE,
 	);
 
 
@@ -123,6 +128,11 @@ class SeleniumContext extends Nette\Object
 
 		$this->browserSession = $this->sessionFactory->create();
 		$this->windows[] = $this->browserSession;
+
+		if ($this->options[self::OPTION_VIDEO_ENABLE]) {
+			$this->videoRecorder = new VideoRecorder(TEMP_DIR);
+			$this->videoRecorder->start();
+		}
 	}
 
 
@@ -174,9 +184,16 @@ class SeleniumContext extends Nette\Object
 		foreach ($this->windows as $window) {
 			$window->stop();
 		}
+
+		if ($this->videoRecorder) {
+			sleep(2); // give it some time before it disappears
+			$this->videoRecorder->stop();
+		}
+
 		$this->windows = array();
 		$this->httpServer->slaughter();
 		$this->httpServer = NULL;
+		$this->videoRecorder = NULL;
 	}
 
 }
