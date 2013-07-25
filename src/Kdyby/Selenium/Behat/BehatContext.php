@@ -14,10 +14,19 @@ use Nette;
 use Behat;
 use Tester\Assert;
 use Kdyby\Selenium\BrowserSession;
+use Kdyby\Selenium\ComponentElement;
 use Kdyby\Selenium\HttpServer;
 use Kdyby\Selenium\PageElement;
 
 
+
+/**
+ * Base context used in BDD tests
+ *
+ * Dispatches commands to *page objects*.
+ *
+ * Also defines dome basic steps.
+ */
 class BehatContext extends Behat\Behat\Context\BehatContext
 {
 
@@ -161,5 +170,108 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 	/********************** basic definitions **********************/
 
+
+
+	/**
+	 * @Then /^u?vidím (komponentu|stránku) (.+)$/
+	 */
+	public function willSeeComponent($type, $componentName)
+	{
+		$page = $this->stack[0];
+
+		switch ($type) {
+			case 'komponentu':
+				if ($page instanceof ComponentElement) { // mam primo komponentu
+					Assert::same($componentName, $page->getName());
+					//if ($componentName === $page->getName()) return; // ok
+
+				} elseif ($page instanceof PageElement) {
+					if ( ! $page->tryFindComponent($componentName)) Assert::fail("Komponenta '$componentName' nenalezena");
+					// jinak ok
+
+				} else {
+					Assert::fail("Expected a component, but got something else: " . get_class($page));
+
+				}
+				break;
+
+			case 'stránku':
+				if ($page instanceof ComponentElement) Assert::fail("Expected page, component");
+				Assert::same($componentName, $page->getName());
+				break;
+
+			default:
+				throw new \InvalidArgumentException;
+		}
+	}
+
+
+
+	/**
+	 * @Then /^neu?vidím (komponentu|stránku) (.+)$/
+	 */
+	public function wontSeeComponent($type, $componentName)
+	{
+		$page = $this->stack[0];
+
+		switch ($type) {
+			case 'komponentu':
+				if ($page instanceof ComponentElement) { // mam primo komponentu
+					Assert::false($componentName === $page->getName());
+
+				} elseif ($page instanceof PageElement) {
+					if ($page->tryFindComponent($componentName)) Assert::fail("Komponenta '$componentName' byla nalezena");
+
+				} else throw new \Nette\InvalidStateException;
+				break;
+
+			case 'stránku':
+				if ($page instanceof ComponentElement) Assert::fail("Expected page, component");
+				Assert::false($componentName === $page->getName());
+				break;
+
+			default:
+				throw new \InvalidArgumentException;
+		}
+	}
+
+
+
+	/**
+	 * @Given /^kliknu na tlačítko (.+)$/
+	 */
+	public function clickButton($text)
+	{
+		$this->session->byXPath("//input[@type='submit'][@value='$text']")->click();
+		// TODO: where to go? Need new PageObject
+	}
+
+
+
+	/**
+	 * @When /^vyplním (['"]?)(.+)\1 do pole (.+)$/
+	 */
+	public function fillForm($quote, $text, $filedName)
+	{
+		$el = NULL;
+
+		if ( ! $el) try { // by name
+			$el = $this->session->byName($filedName);
+		} catch(\Exception $e) {}
+
+		if ( ! $el) try { // by label
+			$label = $this->session->byXPath("//label[./text()[contains(.,'$filedName')]]");
+			if ($label) {
+				$for = $label->attribute('for');
+				$el = $this->session->byId($for);
+			}
+		} catch (\Exception $e) {}
+
+		if ( ! $el) throw new \RuntimeException("Form field not found");
+
+		// TODO: radeji hosiplanovo PageElement::fillForm, ktere je univerzalni na vsechny mozne inputy
+		$el->clear();
+		$el->value($text);
+	}
 
 }
