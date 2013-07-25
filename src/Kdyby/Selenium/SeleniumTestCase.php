@@ -13,7 +13,6 @@ namespace Kdyby\Selenium;
 use Kdyby;
 use Nette;
 use Nette\Diagnostics\Debugger;
-use Tester\Helpers as TesterHelpers;
 use Tester\Assert;
 use Tester\TestCase;
 
@@ -21,22 +20,12 @@ use Tester\TestCase;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ *
+ * @method open($destination)
+ * @method openConcurrentSession($destination)
  */
 abstract class SeleniumTestCase extends TestCase
 {
-
-	const DEFAULT_CONCURRENCY = 5;
-	const DEFAULT_BROWSER = 'firefox';
-
-	const OPTION_CONCURRENCY = 'seleniumConcurrency';
-	const OPTION_BROWSER = 'browserName';
-	const OPTION_ROUTER = 'routerPath';
-	const OPTION_ENV_PREFIX = 'KDYBY';
-
-	/**
-	 * @var HttpServer
-	 */
-	private $httpServer;
 
 	/**
 	 * @var \Nette\DI\Container
@@ -44,85 +33,41 @@ abstract class SeleniumTestCase extends TestCase
 	private $serviceLocator;
 
 	/**
-	 * @var SessionFactory
+	 * @var SeleniumContext
 	 */
-	private $sessionFactory;
-
-	/**
-	 * @var BrowserSession
-	 */
-	private $browserSession;
-
-	/**
-	 * @var BrowserSession[]
-	 */
-	private $windows = array();
-
-	/**
-	 * @var array
-	 */
-	protected $options = array(
-		self::OPTION_CONCURRENCY => self::DEFAULT_CONCURRENCY,
-		self::OPTION_BROWSER => self::DEFAULT_BROWSER,
-		self::OPTION_ROUTER => '%wwwDir%/index.php',
-		self::OPTION_ENV_PREFIX => 'KDYBY',
-	);
+	private $seleniumContext;
 
 
 
 	public function __construct()
 	{
-		$testCaseRefl = new \ReflectionClass('\PHPUnit_Extensions_Selenium2TestCase');
-		Debugger::$blueScreen->collapsePaths[] = dirname($testCaseRefl->getFileName());
-		Debugger::$blueScreen->addPanel(array(new Diagnostics\Panel(), 'renderException'));
+		$this->seleniumContext = new SeleniumContext();
+		Bootstrap::registerPanel();
 	}
 
 
 
-	private function waitForSeleniumSlot()
+	protected function setOption($option, $value)
 	{
-		static $lock;
-		foreach (new \InfiniteIterator(new \ArrayIterator(range(1, $this->options[self::OPTION_CONCURRENCY] + 1))) as $i) {
-			if ($i === $this->options[self::OPTION_CONCURRENCY] + 1) {
-				sleep(1);
-				continue;
-			}
-
-			$lock = fopen(dirname(TEMP_DIR) . '/selenium-' . $i . '.lock', 'w');
-			if (flock($lock, LOCK_EX | LOCK_NB, $wouldBlock) && !$wouldBlock) {
-				break;
-			}
-
-			@fclose($lock);
-			unset($lock);
-		}
+		$this->seleniumContext->setOption($option, $value);
 	}
 
 
 
 	protected function setUp()
 	{
-		$this->windows = array();
-		$this->waitForSeleniumSlot();
-
 		$this->serviceLocator = $this->createContainer();
-		TesterHelpers::setup(); // ensure error & exception helpers are registered
+		$this->seleniumContext->boot($this->serviceLocator, $this->createDatabase($this->serviceLocator));
+	}
 
-		$this->httpServer = new HttpServer();
-		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), array(
-			$this->options[self::OPTION_ENV_PREFIX] . '_DEBUG' => '0',
-			$this->options[self::OPTION_ENV_PREFIX] . '_SELENIUM' => '1',
-			$this->options[self::OPTION_ENV_PREFIX] . '_DATABASE' => $this->createDatabase($this->serviceLocator),
-			$this->options[self::OPTION_ENV_PREFIX] . '_LOG_DIR' => TEMP_DIR,
-			$this->options[self::OPTION_ENV_PREFIX] . '_TEMP_DIR' => TEMP_DIR,
-		));
 
-		$httpRequest = new Nette\Http\Request($this->httpServer->getUrl(), array(), array(), array(), array(), array(), 'GET');
-		$this->serviceLocator->addService('httpRequest', $httpRequest);
-		$this->sessionFactory = new SessionFactory($this->serviceLocator, $this->httpServer, $this->options);
 
-		$this->browserSession = $this->sessionFactory->create();
-		$this->windows[] = $this->browserSession;
+	/**
+	 * @return BrowserSession
+	 */
+	public function getSession()
+	{
+		return $this->seleniumContext->getSession();
 	}
 
 
@@ -139,30 +84,9 @@ abstract class SeleniumTestCase extends TestCase
 
 
 
-	/**
-	 * @param string $destination
-	 * @return BrowserSession
-	 */
-	protected function open($destination)
+	public function __call($name, $arguments)
 	{
-		$args = func_get_args();
-
-		return call_user_func_array(array($this->browserSession, 'presenter'), $args);
-	}
-
-
-
-	/**
-	 * @param string $destination
-	 * @return BrowserSession
-	 */
-	public function openConcurrentSession($destination)
-	{
-		$this->windows[] = $copy = $this->sessionFactory->create();
-
-		$args = func_get_args();
-
-		return call_user_func_array(array($copy, 'presenter'), $args);
+		return call_user_func_array(array($this->seleniumContext, $name), $arguments);
 	}
 
 
@@ -173,7 +97,7 @@ abstract class SeleniumTestCase extends TestCase
 	 */
 	protected function assertDestination($destination, $args = array())
 	{
-		$appRequest = $this->browserSession->presenter();
+		$appRequest = $this->seleniumContext->getSession()->presenter();
 		Assert::true(empty($appRequest));
 		Assert::same($destination, $appRequest->getPresenterName());
 
@@ -181,16 +105,6 @@ abstract class SeleniumTestCase extends TestCase
 			Assert::true(array_key_exists($param, $appRequest->parameters));
 			Assert::same($value, $appRequest->parameters[$param]);
 		}
-	}
-
-
-
-	/**
-	 * @return BrowserSession
-	 */
-	public function getSession()
-	{
-		return $this->browserSession;
 	}
 
 
@@ -210,34 +124,18 @@ abstract class SeleniumTestCase extends TestCase
 
 
 
-	private function takeDownSession()
-	{
-		if ($this->httpServer === NULL) {
-			return;
-		}
-
-		foreach ($this->windows as $window) {
-			$window->stop();
-		}
-		$this->windows = array();
-		$this->httpServer->slaughter();
-		$this->httpServer = NULL;
-	}
-
-
-
 	public function runTest($name, array $args = array())
 	{
 		try {
 			parent::runTest($name, $args);
-			$this->takeDownSession();
+			$this->seleniumContext->takeDown();
 
 		} catch (\Exception $e) {
 			if (Debugger::$browser && ($tracy = Debugger::log($e))) {
 				exec(Debugger::$browser . ' ' . escapeshellarg($tracy));
 			}
 
-			$this->takeDownSession();
+			$this->seleniumContext->takeDown();
 
 			throw $e;
 		}
