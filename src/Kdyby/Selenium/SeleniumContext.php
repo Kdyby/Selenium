@@ -30,6 +30,7 @@ class SeleniumContext extends Nette\Object
 	const OPTION_BROWSER = 'browserName';
 	const OPTION_ROUTER = 'routerPath';
 	const OPTION_ENV_PREFIX = 'KDYBY';
+	const OPTION_ENV_VARIABLES = 'environmentVariables';
 
 	/**
 	 * @var HttpServer
@@ -64,6 +65,7 @@ class SeleniumContext extends Nette\Object
 		self::OPTION_BROWSER => self::DEFAULT_BROWSER,
 		self::OPTION_ROUTER => '%wwwDir%/index.php',
 		self::OPTION_ENV_PREFIX => 'KDYBY',
+		self::OPTION_ENV_VARIABLES => array(),
 	);
 
 
@@ -105,13 +107,14 @@ class SeleniumContext extends Nette\Object
 		TesterHelpers::setup(); // ensure error & exception helpers are registered
 
 		$this->httpServer = new HttpServer();
-		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), array(
-			$this->options[self::OPTION_ENV_PREFIX] . '_DEBUG' => '0',
+		$env = (array) $this->options[self::OPTION_ENV_VARIABLES] + array(
+			$this->options[self::OPTION_ENV_PREFIX] . '_DEBUG'    => '0',
 			$this->options[self::OPTION_ENV_PREFIX] . '_SELENIUM' => '1',
 			$this->options[self::OPTION_ENV_PREFIX] . '_DATABASE' => $databaseName,
-			$this->options[self::OPTION_ENV_PREFIX] . '_LOG_DIR' => TEMP_DIR,
+			$this->options[self::OPTION_ENV_PREFIX] . '_LOG_DIR'  => TEMP_DIR,
 			$this->options[self::OPTION_ENV_PREFIX] . '_TEMP_DIR' => TEMP_DIR,
-		));
+		);
+		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), $env);
 
 		$httpRequest = new Nette\Http\Request($this->httpServer->getUrl(), array(), array(), array(), array(), array(), 'GET');
 		$this->serviceLocator->addService('httpRequest', $httpRequest);
