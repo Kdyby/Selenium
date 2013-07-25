@@ -21,9 +21,7 @@
 	},
 	"require": {
 		"ext-curl": "*",
-		"nette/nette": "*"
-	},
-	"require-dev": {
+		"nette/nette": "@dev",
 		"nette/tester": "@dev",
 		"phpunit/phpunit-selenium": "~1.3",
 		"behat/behat": "@stable"
