@@ -13,10 +13,12 @@ namespace Kdyby\Selenium\Behat;
 use Nette;
 use Behat;
 use Tester\Assert;
+use Kdyby\Selenium\Bootstrap;
 use Kdyby\Selenium\BrowserSession;
 use Kdyby\Selenium\ComponentElement;
 use Kdyby\Selenium\HttpServer;
 use Kdyby\Selenium\PageElement;
+use Kdyby\Selenium\SeleniumContext;
 
 
 
@@ -41,14 +43,9 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	protected $session;
 
 	/**
-	 * @var DummyTestCase
+	 * @var SeleniumContext
 	 */
-	private $tc;
-
-	/**
-	 * @var HttpServer
-	 */
-	private $httpServer;
+	private $seleniumContext;
 
 	/**
 	 * @var PageElement[] indexed by class name
@@ -64,31 +61,53 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 	public function __construct()
 	{
-		$this->serviceLocator = Nette\Environment::getContext(); // there is no better way
+		$this->seleniumContext = new SeleniumContext();
+		Bootstrap::registerPanel();
 	}
-
 
 
 	public function __destruct()
 	{
-		if ($this->tc) {
-			$this->tc->tearDown();
-			$this->tc = NULL;
-		}
+		$this->seleniumContext->takeDown();
+	}
 
-		if ($this->session) {
-			$this->session->stop();
-			$this->session = NULL;
-		}
+
+
+	/**
+	 * This method is meant to be overridden, for you to configure your application
+	 *
+	 * @return \SystemContainer|\Nette\DI\Container
+	 */
+	protected function createContainer()
+	{
+		$configurator = new Nette\Config\Configurator();
+		$configurator->setTempDirectory(TEMP_DIR);
+
+		return $configurator->createContainer();
+	}
+
+
+
+	/**
+	 * This method should create testing database and return it's name.
+	 *
+	 * @param Nette\DI\Container $container
+	 * @return string
+	 */
+	protected function createDatabase(Nette\DI\Container $container) {
+
 	}
 
 
 
 	public function init()
 	{
-		$this->tc = new DummyTestCase;
-		$this->tc->setUp();
-		$this->session = $this->tc->getSession();
+		if ($this->serviceLocator) return; // already initialized
+
+		$this->serviceLocator = $this->createContainer();
+		$this->seleniumContext->boot($this->serviceLocator, $this->createDatabase($this->serviceLocator));
+
+		$this->session = $this->seleniumContext->getSession();
 	}
 
 
