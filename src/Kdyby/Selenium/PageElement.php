@@ -18,7 +18,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-abstract class PageElement
+abstract class PageElement extends Nette\Object
 {
 
 	/**
