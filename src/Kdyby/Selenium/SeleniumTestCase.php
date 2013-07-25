@@ -76,6 +76,7 @@ abstract class SeleniumTestCase extends TestCase
 	 * This method should create testing database and return it's name.
 	 *
 	 * @param Nette\DI\Container $container
+	 * @return string
 	 */
 	protected function createDatabase(Nette\DI\Container $container)
 	{
