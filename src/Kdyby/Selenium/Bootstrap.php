@@ -12,6 +12,7 @@ namespace Kdyby\Selenium;
 
 use Kdyby;
 use Nette;
+use Nette\Diagnostics\Debugger;
 use Tester;
 
 
@@ -44,6 +45,19 @@ class Bootstrap
 			xdebug_disable();
 			Tester\CodeCoverage\Collector::start($rootDir . '/coverage.dat');
 		}
+	}
+
+
+
+	/**
+	 * @return Diagnostics\Panel
+	 */
+	public static function registerPanel()
+	{
+		$testCaseRefl = new \ReflectionClass('\PHPUnit_Extensions_Selenium2TestCase');
+		Debugger::$blueScreen->collapsePaths[] = dirname($testCaseRefl->getFileName());
+		Debugger::$blueScreen->addPanel(array($panel = new Diagnostics\Panel(), 'renderException'));
+		return $panel;
 	}
 
 
