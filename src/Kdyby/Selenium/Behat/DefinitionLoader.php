@@ -85,6 +85,9 @@ class DefinitionLoader implements LoaderInterface
 		// find all classes
 		$robot = new RobotLoader;
 		foreach ($this->sitemapDirs as $dir) {
+			if (!is_dir($dir)) {
+				continue;
+			}
 			$robot->addDirectory($dir);
 		}
 		$robot->setCacheStorage(new \Nette\Caching\Storages\DevNullStorage());

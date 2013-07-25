@@ -36,6 +36,9 @@ class Application extends BehatApplication
 	{
 		$container = new ContainerBuilder();
 		$this->loadCoreExtension($container, $this->loadConfiguration($container, $input));
+		$definitionLoaderExtension = new DI\LoaderExtension;
+		$definitionLoaderExtension->load(array(), $container);
+
 		$container->compile();
 
 		return $container;

@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+	<parameters>
+		<parameter key="behat.paths.sitemap">%behat.paths.base%/Sitemap</parameter>
+	</parameters>
+
+	<services>
+		<service id="behat.context.loader.pageObject" class="Kdyby\Selenium\Behat\DefinitionLoader">
+			<argument type="service" id="behat.definition.dispatcher"/>
+			<argument type="service" id="behat.hook.dispatcher"/>
+			<argument>%behat.paths.sitemap%</argument>
+			<tag name="behat.context.loader"/>
+		</service>
+    </services>
+</container>
