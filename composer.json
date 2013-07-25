@@ -34,9 +34,6 @@
 		},
 		"classmap": [
 			"src/Kdyby/Selenium/exceptions.php"
-		],
-		"files": [
-			"src/Kdyby/Selenium/functions.php"
 		]
 	}
 }
