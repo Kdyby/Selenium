@@ -41,8 +41,18 @@ abstract class SeleniumTestCase extends TestCase
 
 	public function __construct()
 	{
-		$this->seleniumContext = new SeleniumContext();
+		$this->seleniumContext = $this->createSeleniumContext();
 		Bootstrap::registerPanel();
+	}
+
+
+
+	/**
+	 * @return SeleniumContext
+	 */
+	protected function createSeleniumContext()
+	{
+		return new SeleniumContext();
 	}
 
 
