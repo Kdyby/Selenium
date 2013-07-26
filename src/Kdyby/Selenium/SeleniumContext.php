@@ -117,6 +117,7 @@ class SeleniumContext extends Nette\Object
 		$this->httpServer->start($this->serviceLocator->expand($this->options[self::OPTION_ROUTER]), $env);
 
 		$httpRequest = new Nette\Http\Request($this->httpServer->getUrl(), array(), array(), array(), array(), array(), 'GET');
+		$this->serviceLocator->removeService('httpRequest');
 		$this->serviceLocator->addService('httpRequest', $httpRequest);
 		$this->sessionFactory = new SessionFactory($this->serviceLocator, $this->httpServer, $this->options);
 
