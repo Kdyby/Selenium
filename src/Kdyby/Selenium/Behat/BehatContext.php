@@ -68,7 +68,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 	public function __destruct()
 	{
-		$this->seleniumContext->takeDown();
+		$this->tearDown();
 	}
 
 
@@ -100,7 +100,12 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 
 
-	public function init()
+	/**
+	 * Like in a test case, executed before each scenario
+	 *
+	 * @return void
+	 */
+	public function setUp()
 	{
 		if ($this->serviceLocator) return; // already initialized
 
@@ -109,6 +114,19 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 		$this->session = $this->seleniumContext->getSession();
 	}
+
+
+
+	/**
+	 * Like in a test case, executed after each scenario
+	 *
+	 * @return void
+	 */
+	public function tearDown()
+	{
+		$this->seleniumContext->takeDown();
+	}
+
 
 
 

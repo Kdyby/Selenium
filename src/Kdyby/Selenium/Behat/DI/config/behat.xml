@@ -14,5 +14,9 @@
 			<argument>%behat.paths.sitemap%</argument>
 			<tag name="behat.context.loader"/>
 		</service>
+
+		<service id="behat.selenium.setupWrapper" class="Kdyby\Selenium\Behat\SetupWrapper">
+			<tag name="behat.event_subscriber" priority="1" />
+		</service>
     </services>
 </container>
