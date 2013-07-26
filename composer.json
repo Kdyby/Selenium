@@ -33,5 +33,9 @@
 		"classmap": [
 			"src/Kdyby/Selenium/exceptions.php"
 		]
-	}
+	},
+	"bin": [
+		"bin/behat",
+		"bin/kdyby-behat"
+	]
 }
