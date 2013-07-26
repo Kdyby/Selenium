@@ -45,7 +45,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	/**
 	 * @var SeleniumContext
 	 */
-	private $seleniumContext;
+	protected $seleniumContext;
 
 	/**
 	 * @var PageElement[] indexed by class name
