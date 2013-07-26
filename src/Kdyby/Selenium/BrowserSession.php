@@ -70,6 +70,8 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 		$this->parameters = $parameters;
 
 		$this->keysHolder = new \PHPUnit_Extensions_Selenium2TestCase_KeysHolder();
+
+		$this->currentWindow()->maximize();
 	}
 
 
