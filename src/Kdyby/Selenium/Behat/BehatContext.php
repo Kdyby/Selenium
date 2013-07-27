@@ -38,11 +38,6 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	protected $serviceLocator;
 
 	/**
-	 * @var BrowserSession
-	 */
-	protected $session;
-
-	/**
 	 * @var SeleniumContext
 	 */
 	protected $seleniumContext;
@@ -111,8 +106,16 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 		$this->serviceLocator = $this->createContainer();
 		$this->seleniumContext->boot($this->serviceLocator, $this->createDatabase($this->serviceLocator));
+	}
 
-		$this->session = $this->seleniumContext->getSession();
+
+
+	/**
+	 * @return BrowserSession
+	 */
+	public function getSession()
+	{
+		return $this->seleniumContext->getSession();
 	}
 
 
@@ -293,14 +296,14 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		$el = NULL;
 
 		if ( ! $el) try { // by name
-			$el = $this->session->byName($filedName);
+			$el = $this->getSession()->byName($filedName);
 		} catch(\Exception $e) {}
 
 		if ( ! $el) try { // by label
-			$label = $this->session->byXPath("//label[./text()[contains(.,'$filedName')]]");
+			$label = $this->getSession()->byXPath("//label[./text()[contains(.,'$filedName')]]");
 			if ($label) {
 				$for = $label->attribute('for');
-				$el = $this->session->byId($for);
+				$el = $this->getSession()->byId($for);
 			}
 		} catch (\Exception $e) {}
 
