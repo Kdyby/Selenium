@@ -230,7 +230,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 					// jinak ok
 
 				} else {
-					Assert::fail("Expected a component, but got something else: " . get_class($page));
+					Assert::fail("Expected a component '$componentName', but got something else: " . get_class($page));
 
 				}
 				break;
