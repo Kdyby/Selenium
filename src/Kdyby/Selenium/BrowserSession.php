@@ -158,6 +158,38 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 
 
 
+	/**
+	 * @param \PHPUnit_Extensions_Selenium2TestCase_ElementCriteria $criteria
+	 * @throws \PHPUnit_Extensions_Selenium2TestCase_WebDriverException
+	 * @return Element
+	 */
+	public function element(\PHPUnit_Extensions_Selenium2TestCase_ElementCriteria $criteria)
+	{
+		if (($all = $this->elements($criteria)) && ($element = reset($all))) {
+			return $element;
+		}
+
+		throw new \PHPUnit_Extensions_Selenium2TestCase_WebDriverException("Element '{$criteria['value']}' using '{$criteria['using']}'.");
+	}
+
+
+
+	/**
+	 * @param \PHPUnit_Extensions_Selenium2TestCase_ElementCriteria $criteria
+	 * @return \PHPUnit_Extensions_Selenium2TestCase_ElementCriteria[]
+	 */
+	public function elements(\PHPUnit_Extensions_Selenium2TestCase_ElementCriteria $criteria)
+	{
+		$elements = array();
+		foreach ($this->postCommand('elements', $criteria) as $value) {
+			$elements[] = Element::fromResponseValue($value, $this->getSessionUrl()->descend('element'), $this->driver);
+		}
+
+		return $elements;
+	}
+
+
+
 	public function captureDebugState()
 	{
 		try {
