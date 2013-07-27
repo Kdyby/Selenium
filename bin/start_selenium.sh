@@ -18,7 +18,7 @@ if [ -x "$(which Xephyr)" ]; then # apt-get install xserver-xephyr fvwm
 	export DISPLAY=:0
 	Xephyr :1 -screen 1280x768 -ac &
 	export DISPLAY=:1
-	sleep 2
+	sleep 3
 	fvwm &
 	sleep 1
 	java -jar "$dir/$SERVER_FILE" 2>&1 &
