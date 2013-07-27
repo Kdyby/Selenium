@@ -76,28 +76,6 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 
 
 
-	public function prepareDatabase()
-	{
-		$db = $this->serviceLocator->getByType('Kdyby\Doctrine\Connection'); // default connection
-		/** @var Connection $db */
-
-		$testDbName = 'damejidlo_test_' . $this->httpServerUrl->getPort();
-		$db->exec("DROP DATABASE IF EXISTS `$testDbName`");
-		$db->exec("CREATE DATABASE `$testDbName`");
-		$db->exec("USE `$testDbName`");
-		$this->database = $db;
-		\Kdyby\Doctrine\Helpers::loadFromFile($db, __DIR__ . '/../sql/empty-database.sql');
-
-		// drop on shutdown
-		register_shutdown_function(function () use ($db, $testDbName) {
-			$db->exec("DROP DATABASE IF EXISTS `$testDbName`");
-		});
-
-		return $this;
-	}
-
-
-
 	/**
 	 * @param $destination
 	 * @param array $args
