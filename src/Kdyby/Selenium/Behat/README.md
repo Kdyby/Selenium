@@ -27,4 +27,6 @@ default:
 
     context:
         class: MyBehatContext
+        parameters:
+            sitemapDirs: "%behat.paths.sitemap%"
 ```

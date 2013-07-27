@@ -39,20 +39,21 @@ abstract class SeleniumTestCase extends TestCase
 
 
 
-	public function __construct()
+	public function __construct($sitemapDirs)
 	{
-		$this->seleniumContext = $this->createSeleniumContext();
+		$this->seleniumContext = $this->createSeleniumContext($sitemapDirs);
 		Bootstrap::registerPanel();
 	}
 
 
 
 	/**
+	 * @param string[] $sitemapDirs
 	 * @return SeleniumContext
 	 */
-	protected function createSeleniumContext()
+	protected function createSeleniumContext($sitemapDirs)
 	{
-		return new SeleniumContext();
+		return new SeleniumContext($sitemapDirs);
 	}
 
 

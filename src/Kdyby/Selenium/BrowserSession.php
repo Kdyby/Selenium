@@ -113,7 +113,7 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 
 		} else {
 			foreach ($router as $route) {
-				if ($route instanceof Kdyby\Console\CliRouter) {
+				if (($route instanceof Kdyby\Console\CliRouter) || ($route instanceof Nette\Application\Routers\CliRouter)) {
 					continue;
 				}
 

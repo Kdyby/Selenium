@@ -54,9 +54,9 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 
 
-	public function __construct()
+	public function __construct(array $options)
 	{
-		$this->seleniumContext = new SeleniumContext();
+		$this->seleniumContext = new SeleniumContext($options['sitemapDirs']);
 		Bootstrap::registerPanel();
 	}
 
@@ -295,7 +295,15 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 			Assert::fail("Button with title '$text' was not found");
 		}
 
-		// TODO: where to go? Need new PageObject
+		if ($appRequest = $this->getSession()->presenter()) {
+			$className = $this->seleniumContext->sitemap->findPageByPresenter($appRequest);
+
+			if ( ! $this->stack[0] instanceof $className) {
+				$this->pushPage(new $className($this->getSession()));
+			}
+		}
+
+		throw new \RuntimeException;
 	}
 
 

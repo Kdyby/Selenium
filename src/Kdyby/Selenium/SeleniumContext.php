@@ -61,6 +61,9 @@ class SeleniumContext extends Nette\Object
 	/** @var VideoRecorder */
 	private $videoRecorder;
 
+	/** @var Sitemap */
+	public $sitemap; //FIXME
+
 	/**
 	 * @var array
 	 */
@@ -72,6 +75,16 @@ class SeleniumContext extends Nette\Object
 		self::OPTION_ENV_VARIABLES => array(),
 		self::OPTION_VIDEO_ENABLE => FALSE,
 	);
+
+
+
+	/**
+	 * @param string[]|string $dirs Directories where to search
+	 */
+	public function __construct($sitemapDirs)
+	{
+		$this->sitemap = new Sitemap((array) $sitemapDirs);
+	}
 
 
 

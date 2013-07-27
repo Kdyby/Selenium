@@ -52,7 +52,7 @@ abstract class PageElement extends Nette\Object
 	/**
 	 * @return string
 	 */
-	public function getName()
+	final public function getName()
 	{
 		return Nette\Reflection\ClassType::from($this)->getAnnotation('Name');
 	}
@@ -66,7 +66,7 @@ abstract class PageElement extends Nette\Object
 
 
 
-	public function getPresenterName()
+	final public function getPresenterName()
 	{
 		if (!$destination = $this->getElementPresenter()) {
 			return NULL;
@@ -79,7 +79,7 @@ abstract class PageElement extends Nette\Object
 
 
 
-	public function getPresenterAction()
+	final public function getPresenterAction()
 	{
 		if (!$destination = $this->getElementPresenter()) {
 			return NULL;

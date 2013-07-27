@@ -10,6 +10,7 @@
 
 namespace Kdyby\Selenium\Behat;
 
+use Kdyby\Selenium\Sitemap;
 use Nette\Loaders\RobotLoader;
 use Behat\Behat\Definition\DefinitionDispatcher;
 use Behat\Behat\Hook\HookDispatcher;
@@ -51,8 +52,8 @@ class DefinitionLoader implements LoaderInterface
 	/** @var string */
 	private $availableAnnotations;
 
-	/** @var string[] */
-	private $sitemapDirs;
+	/** @var Sitemap */
+	private $sitemap;
 
 
 
@@ -68,7 +69,7 @@ class DefinitionLoader implements LoaderInterface
 		$this->definitionDispatcher = $definitionDispatcher;
 		$this->hookDispatcher = $hookDispatcher;
 		$this->availableAnnotations = implode("|", array_keys($this->annotationClasses));
-		$this->sitemapDirs = (array) $sitemapDirs;
+		$this->sitemap = new Sitemap((array) $sitemapDirs);
 	}
 
 
@@ -82,20 +83,7 @@ class DefinitionLoader implements LoaderInterface
 
 	public function load(ContextInterface $context)
 	{
-		// find all classes
-		$robot = new RobotLoader;
-		foreach ($this->sitemapDirs as $dir) {
-			if (!is_dir($dir)) {
-				continue;
-			}
-			$robot->addDirectory($dir);
-		}
-		$robot->setCacheStorage(new \Nette\Caching\Storages\DevNullStorage());
-		$robot->rebuild();
-		$classes = array_keys($robot->getIndexedClasses());
-
-
-		foreach ($classes as $className) {
+		foreach ($this->sitemap->findClasses() as $className) {
 			$reflection = new \ReflectionClass($className);
 
 			foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $methodRefl) {
