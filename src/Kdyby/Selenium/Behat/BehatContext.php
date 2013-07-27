@@ -282,7 +282,19 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 */
 	public function clickButton($text)
 	{
-		$this->session->byXPath("//input[@type='submit'][@value='$text']")->click();
+		$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//input[@type='submit'][@value='$text']"));
+		if (!$buttons) {
+			$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//button[@type='submit'][./text()[contains(.,'$text')]]"));
+		}
+
+		if ($button = reset($buttons)) {
+			/** @var \PHPUnit_Extensions_Selenium2TestCase_Element $button */
+			$button->click();
+
+		} else {
+			Assert::fail("Button with title '$text' was not found");
+		}
+
 		// TODO: where to go? Need new PageObject
 	}
 
