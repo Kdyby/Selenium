@@ -10,6 +10,7 @@
 
 namespace Kdyby\Selenium\Behat;
 
+use Kdyby\Selenium\Element;
 use Nette;
 use Behat;
 use Tester\Assert;
@@ -271,17 +272,25 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 
 	/**
-	 * @Given /^kliknu na tlačítko (.+)$/
+	 * @Given /^kliknu na (tlačítko|odkaz) (.+)$/
 	 */
-	public function clickButton($text)
+	public function clickButton($type, $text)
 	{
-		$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//input[@type='submit'][@value='$text']"));
-		if (!$buttons) {
-			$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//button[@type='submit'][./text()[contains(.,'$text')]]"));
+		switch ($type) {
+			case 'tlačítko':
+				$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//input[@type='submit'][@value='$text']"));
+				if (!$buttons) {
+					$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//button[@type='submit'][./text()[contains(.,'$text')]]"));
+				}
+				break;
+
+			case 'odkaz':
+				$buttons = $this->getSession()->elements($this->getSession()->using('partial link text')->value($text));
+				break;
 		}
 
 		if ($button = reset($buttons)) {
-			/** @var \PHPUnit_Extensions_Selenium2TestCase_Element $button */
+			/** @var Element $button */
 			$button->click();
 
 		} else {
