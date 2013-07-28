@@ -288,15 +288,12 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 			Assert::fail("Button with title '$text' was not found");
 		}
 
-		if ($appRequest = $this->getSession()->presenter()) {
-			$className = $this->seleniumContext->sitemap->findPageByPresenter($appRequest);
-
-			if ( ! $this->stack[0] instanceof $className) {
-				$this->pushPage(new $className($this->getSession()));
-			}
-
-		} else {
+		if (!$className = $this->seleniumContext->findPageObjectClass()) {
 			throw new \RuntimeException("Router didn't match the url " . $this->getSession()->url());
+		}
+
+		if (!$this->stack[0] instanceof $className) {
+			$this->pushPage(new $className($this->getSession()));
 		}
 	}
 

@@ -62,7 +62,7 @@ class SeleniumContext extends Nette\Object
 	private $videoRecorder;
 
 	/** @var Sitemap */
-	public $sitemap; //FIXME
+	private $sitemap;
 
 	/**
 	 * @var array
@@ -184,6 +184,21 @@ class SeleniumContext extends Nette\Object
 	public function getSession()
 	{
 		return $this->browserSession;
+	}
+
+
+
+	/**
+	 * @param Nette\Application\Request $appRequest
+	 * @return string
+	 */
+	public function findPageObjectClass(Nette\Application\Request $appRequest = NULL)
+	{
+		if (!($appRequest = $appRequest ? : $this->getSession()->presenter())) {
+			return NULL;
+		}
+
+		return $this->sitemap->findPageByPresenter($appRequest);
 	}
 
 
