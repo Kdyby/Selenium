@@ -44,7 +44,7 @@ class ReportGenerator
 	{
 		foreach (Finder::findFiles('*.png')->in($this->outDir) as $image) {
 			/** @var \SplFileInfo $image */
-			$blank = Image::fromBlank(120, 120, array('green' => 255, 'blue' => 255, 'alpha' => 255));
+			$blank = Image::fromBlank(120, 120, array('green' => 255, 'blue' => 255, 'red' => 255));
 			$blank->place(Image::fromFile($image->getPathname())->resize(120, 120));
 			$blank->save(dirname($image->getPathname()) . '/' . $image->getBasename('.png') . '.thumb.png');
 		}
