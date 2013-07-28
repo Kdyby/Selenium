@@ -81,7 +81,7 @@ class Sitemap
 			$presenter = ltrim($class->getAnnotation('Presenter'), ':');
 			$name = $class->getAnnotation('Name');
 
-			if ($presenter) $this->presenterMap[$presenter] = $className;
+			if ($presenter) $this->presenterMap[substr($presenter, -1) === ':' ? $presenter . 'default' : $presenter] = $className;
 			if ($name) $this->nameMap[$className] = $name;
 		}
 	}
