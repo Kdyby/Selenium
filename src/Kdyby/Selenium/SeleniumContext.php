@@ -51,7 +51,7 @@ class SeleniumContext extends Nette\Object
 	/**
 	 * @var BrowserSession
 	 */
-	private $browserSession;
+	private $currentSession;
 
 	/**
 	 * @var BrowserSession[]
@@ -139,8 +139,9 @@ class SeleniumContext extends Nette\Object
 		$this->serviceLocator->addService('httpRequest', $httpRequest);
 		$this->sessionFactory = new SessionFactory($this->serviceLocator, $this->httpServer, $this->options);
 
-		$this->browserSession = $this->sessionFactory->create();
-		$this->windows[] = $this->browserSession;
+		$this->currentSession = $this->sessionFactory->create();
+		$this->currentSession->setContext($this);
+		$this->windows[] = $this->currentSession;
 
 		if ($this->options[self::OPTION_VIDEO_ENABLE]) {
 			$this->videoRecorder = new VideoRecorder(TEMP_DIR);
@@ -158,7 +159,7 @@ class SeleniumContext extends Nette\Object
 	{
 		$args = func_get_args();
 
-		return call_user_func_array(array($this->browserSession, 'presenter'), $args);
+		return call_user_func_array(array($this->currentSession, 'presenter'), $args);
 	}
 
 
@@ -169,11 +170,19 @@ class SeleniumContext extends Nette\Object
 	 */
 	public function openConcurrentSession($destination)
 	{
-		$this->windows[] = $copy = $this->sessionFactory->create();
+		$this->windows[] = $this->currentSession = $this->sessionFactory->create();
+		$this->currentSession->setContext($this);
 
 		$args = func_get_args();
 
-		return call_user_func_array(array($copy, 'presenter'), $args);
+		return call_user_func_array(array($this->currentSession, 'presenter'), $args);
+	}
+
+
+
+	public function changeDefaultSession(BrowserSession $session)
+	{
+		$this->currentSession = $session;
 	}
 
 
@@ -183,7 +192,7 @@ class SeleniumContext extends Nette\Object
 	 */
 	public function getSession()
 	{
-		return $this->browserSession;
+		return $this->currentSession;
 	}
 
 

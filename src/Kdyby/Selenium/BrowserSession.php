@@ -53,6 +53,11 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 	 */
 	private $keysHolder;
 
+	/**
+	 * @var SeleniumContext
+	 */
+	private $context;
+
 
 
 	public function __construct(
@@ -72,6 +77,39 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 		$this->keysHolder = new \PHPUnit_Extensions_Selenium2TestCase_KeysHolder();
 
 		$this->currentWindow()->maximize();
+	}
+
+
+
+	/**
+	 * @param SeleniumContext $context
+	 * @return BrowserSession
+	 */
+	public function setContext(SeleniumContext $context)
+	{
+		$this->context = $context;
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @return SeleniumContext
+	 */
+	public function getContext()
+	{
+		return $this->context;
+	}
+
+
+
+	/**
+	 * Set's this browser session instance as default
+	 */
+	public function makeDefault()
+	{
+		$this->context->changeDefaultSession($this);
 	}
 
 
