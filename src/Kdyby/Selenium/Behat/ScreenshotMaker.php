@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Takes screenshots of each step and generates a html report afterwards
  *
- * Can be disabled by environment variable MAKE_SCREENSHOTS=0
+ * Can be enabled by environment variable MAKE_SCREENSHOTS=1
  */
 class ScreenshotMaker implements EventSubscriberInterface
 {
@@ -56,8 +56,7 @@ class ScreenshotMaker implements EventSubscriberInterface
 	 */
 	public function __construct($outDir, $rootDir)
 	{
-		$enabled = getenv('MAKE_SCREENSHOTS');
-		$this->enabled = ($enabled === FALSE) || (bool) $enabled; // false - not set, i.e. default
+		$this->enabled = (bool) getenv('MAKE_SCREENSHOTS'); // false - not set, i.e. default
 		if (!$this->enabled) return;
 
 		if (!is_dir($outDir)) mkdir($outDir, 0777, TRUE);
@@ -163,7 +162,7 @@ class ScreenshotMaker implements EventSubscriberInterface
 			'exception' => ($ex = $event->getException()) ? $ex->getMessage() : NULL,
 		);
 	}
-	
+
 }
 
 
