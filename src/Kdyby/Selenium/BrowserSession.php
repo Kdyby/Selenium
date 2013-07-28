@@ -218,7 +218,7 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 			return $element;
 		}
 
-		throw new \PHPUnit_Extensions_Selenium2TestCase_WebDriverException("Element '{$criteria['value']}' using '{$criteria['using']}'.");
+		throw new \PHPUnit_Extensions_Selenium2TestCase_WebDriverException("Element '{$criteria['value']}' not found using strategy '{$criteria['using']}'.");
 	}
 
 
