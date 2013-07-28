@@ -133,14 +133,25 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 	 */
 	public function waitForAjax()
 	{
+		$wasWaiting = FALSE;
+
 		do {
 			$finished = $this->execute(array(
 				'script' => 'return jQuery.active == 0;',
 				'args' => array(),
 			));
 			usleep(250);
+			if (!$finished) {
+				$wasWaiting = TRUE;
+			}
 		} while (!$finished);
-		sleep(1); // time for processing nette.ajax.js snippets
+
+		if ($wasWaiting) {
+			usleep(500); // time for processing nette.ajax.js snippets
+
+		} else {
+			usleep(250); // I'm kind of super-paranoid
+		}
 
 		return $this;
 	}
