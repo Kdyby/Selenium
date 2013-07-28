@@ -162,16 +162,9 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		// dispatch
 		$ret = call_user_func_array(array($page, $methodName), $values);
 
-
-		if ($ret === $this->stack[0]) { // the current page object -> don't care
-
-		} elseif ($ret instanceof PageElement) { // another page object back
+		if ($ret !== $this->stack[0] && $ret instanceof PageElement) {
 			$this->pushPage($ret);
-
-		} else { // something else
-			$x = 1;
 		}
-
 	}
 
 
