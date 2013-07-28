@@ -309,29 +309,38 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 
 	/**
-	 * @When /^vyplním (['"]?)(.+)\1 do pole (.+)$/
+	 * @When /^(?:do pole|vyplním) (['"]?)(.*?)\1 (?:vyplním|do pole) (.+)$/
 	 */
-	public function fillForm($quote, $text, $filedName)
+	public function fillInputByLabel($x, $label, $value)
 	{
 		$el = NULL;
 
-		if ( ! $el) try { // by name
-			$el = $this->getSession()->byName($filedName);
-		} catch(\Exception $e) {}
-
-		if ( ! $el) try { // by label
-			$label = $this->getSession()->byXPath("//label[./text()[contains(.,'$filedName')]]");
-			if ($label) {
-				$for = $label->attribute('for');
+		try { // by label
+			$labels = $this->getSession()->elements($this->getSession()->using('xpath')->value("//label[./text()[contains(.,'$label')]]"));
+			if ($labelEl = reset($labels)) {
+				$for = $labelEl->attribute('for');
 				$el = $this->getSession()->byId($for);
 			}
-		} catch (\Exception $e) {}
+		} catch (\Exception $e) {
+		}
 
-		if ( ! $el) throw new \RuntimeException("Form field not found");
+		if (!$el) {
+			try { // by name
+				$inputs = $this->getSession()->elements($this->getSession()->using('name')->value($label));
+				if ($inputs) {
+					$el = reset($inputs);
+				}
 
-		// TODO: radeji hosiplanovo PageElement::fillForm, ktere je univerzalni na vsechny mozne inputy
+			} catch (\Exception $e) {
+			}
+		}
+
+		if (!$el) {
+			throw new \RuntimeException("Form field $label not found");
+		}
+
 		$el->clear();
-		$el->value($text);
+		$el->value($value);
 	}
 
 }
