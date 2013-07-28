@@ -5,6 +5,7 @@
 
 	<parameters>
 		<parameter key="behat.paths.sitemap">%behat.paths.base%/Sitemap</parameter>
+		<parameter key="behat.paths.reports">%behat.paths.base%/out</parameter>
 	</parameters>
 
 	<services>
@@ -16,6 +17,12 @@
 		</service>
 
 		<service id="behat.selenium.setupWrapper" class="Kdyby\Selenium\Behat\SetupWrapper">
+			<tag name="behat.event_subscriber" priority="1" />
+		</service>
+
+		<service id="behat.selenium.screenshotMaker" class="Kdyby\Selenium\Behat\ScreenshotMaker">
+			<argument>%behat.paths.reports%</argument>
+			<argument>%behat.paths.base%</argument>
 			<tag name="behat.event_subscriber" priority="1" />
 		</service>
     </services>

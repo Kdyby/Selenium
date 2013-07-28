@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>Report {=date('Y-m-d H:i:s')}</title>
+	<meta charset="utf-8">
+	<style>
+		.screenshots li { list-style-type: none; float: left; }
+
+		tr.header.passed .status { color: green; }
+		tr.header.undefined .status { color: #bfb000; }
+		tr.header.failed .status { color: red; }
+
+		.screenshots img.undefined { border: 1px solid #bfb000; }
+		.screenshots img.failed { border: 1px solid red; }
+	</style>
+	<link type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.css" />
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fancybox/2.0.4/jquery.fancybox.pack.js"></script>
+</head>
+<body>
+	<h1>Report {=date('Y-m-d H:i:s')}</h1>
+
+	<table>
+		{foreach $report as $item}
+			{var $numScenario = $iterator->counter}
+			<tr class="header {$item['result']|resultClass}">
+				<td>{$item['feature']}</td>
+				<td>{$item['scenario']}</td>
+				<td class="status">{$item['result']|resultName}</td>
+			</tr>
+			<tr class="screenshots">
+				<td colspan="3">
+					<ul>
+						<li n:foreach="$item['steps'] as $stepResult">
+							<a href="{$stepResult['file']}" rel="{$numScenario}">
+								<img src="{$stepResult['file']}" class="{$stepResult['result']|resultClass}" title="{$stepResult['text']}" width="100" />
+							</a>
+						</li>
+					</ul>
+				</td>
+			</tr>
+		{/foreach}
+	</table>
+
+	<script>
+	$(function() {
+		$(".screenshots a").fancybox({
+			'transitionIn': 'elastic',
+			'transitionOut': 'elastic',
+			'speedIn': 600,
+			'speedOut': 200,
+			'overlayShow': false
+		});
+	});
+	</script>
+</body>
