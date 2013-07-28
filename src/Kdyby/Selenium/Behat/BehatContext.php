@@ -343,4 +343,51 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		$el->value($value);
 	}
 
+
+
+	/**
+	 * @Given /^((?:za|od)škrtnu) (.*)$/
+	 */
+	public function willCheckOrUncheck($type, $checkbox)
+	{
+		$labels = $this->getSession()->elements($this->getSession()->using('xpath')->value("//label[./text()[contains(.,'$checkbox')]]"));
+		if ($clickTarget = reset($labels)) {
+			/** @var Element $clickTarget */
+
+			$inputs = $this->getSession()->elements($this->getSession()->using('xpath')->value("//input[@type='checkbox']"));
+			if (!$input = reset($inputs)) {
+				try {
+					if ($for = $clickTarget->attribute('for')) {
+						$input = $this->getSession()->byId($for);
+					}
+
+				} catch (\Exception $e) {
+
+				}
+			}
+		}
+
+		if (empty($clickTarget) || empty($input)) {
+			throw new \RuntimeException("Checkbox $checkbox not found");
+		}
+
+		switch ($type) {
+			case 'zaškrtnu':
+				if (!$input->selected()) {
+					$clickTarget->click();
+				}
+
+				break;
+
+			case 'odškrtnu':
+				if ($input->selected()) {
+					$clickTarget->click();
+				}
+				break;
+
+			default:
+				throw new \InvalidArgumentException("Unknown operation $type");
+		}
+	}
+
 }
