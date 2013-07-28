@@ -294,9 +294,10 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 			if ( ! $this->stack[0] instanceof $className) {
 				$this->pushPage(new $className($this->getSession()));
 			}
-		}
 
-		throw new \RuntimeException;
+		} else {
+			throw new \RuntimeException("Router didn't match the url " . $this->getSession()->url());
+		}
 	}
 
 
