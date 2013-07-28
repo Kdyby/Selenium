@@ -178,7 +178,9 @@ abstract class PageElement extends Nette\Object
 	/**
 	 * @param \PHPUnit_Extensions_Selenium2TestCase_Element $form
 	 * @param array $values
+	 * @param bool $clear
 	 * @throws \RuntimeException
+	 * @throws \Nette\NotImplementedException
 	 * @return \PHPUnit_Extensions_Selenium2TestCase_Element
 	 */
 	protected function fillForm(\PHPUnit_Extensions_Selenium2TestCase_Element $form, array $values, $clear = TRUE)
@@ -246,14 +248,17 @@ abstract class PageElement extends Nette\Object
 
 	private function tryClickOnLabel(\PHPUnit_Extensions_Selenium2TestCase_Element $form, $type, $name, $value = NULL)
 	{
-		try { // try finding label
-			$label = $form->byXPath("//label[./input[@type='{$type}'][@name='{$name}']" . ($value ? "[@value='{$value}']" : '') . "]");
-
-		} catch (\Exception $e) {
-			return FALSE;
+		$labels = $form->elements($form->using('xpath')->value("//label[./input[@type='{$type}'][@name='{$name}']" . ($value ? "[@value='{$value}']" : '') . "]"));
+		if (!$labels) {
+			$labels = $form->elements($form->using('xpath')->value("//label[./text()[contains(.,'$value')]]"));
 		}
 
-		$label->click();
+		if ($label = reset($labels)) {
+			$label->click();
+
+		} else {
+			throw new \RuntimeException("Radio button label for value or with text '$value' not found.");
+		}
 
 		return TRUE;
 	}
