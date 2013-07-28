@@ -304,6 +304,8 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		if (!$this->stack[0] instanceof $className) {
 			$this->pushPage(new $className($this->getSession()));
 		}
+
+		$this->getSession()->waitForAjax();
 	}
 
 
