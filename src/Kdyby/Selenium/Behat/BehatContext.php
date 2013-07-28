@@ -163,7 +163,16 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		// dispatch
 		$ret = call_user_func_array(array($page, $methodName), $values);
 
-		if ($ret !== $this->stack[0] && $ret instanceof PageElement) {
+		if ($ret === NULL) {
+			if (!$className = $this->seleniumContext->findPageObjectClass()) {
+				throw new \RuntimeException("Router didn't match the url " . $this->getSession()->url());
+			}
+
+			if (!$this->stack[0] instanceof $className) {
+				$this->pushPage(new $className($this->getSession()));
+			}
+
+		} elseif ($ret !== $this->stack[0] && $ret instanceof PageElement) {
 			$this->pushPage($ret);
 		}
 	}
