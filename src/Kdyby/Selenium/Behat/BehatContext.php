@@ -320,7 +320,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 
 
 	/**
-	 * @When /^(?:do pole|vyplním) (['"]?)(.*?)\1 (?:vyplním|do pole) (.+)$/
+	 * @When /^do pole (['"]?)(.+)\1 vyplním (.+)$/
 	 */
 	public function fillInputByLabel($x, $label, $value)
 	{
@@ -354,6 +354,13 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		$el->value($value);
 	}
 
+	/**
+	 * @When /^vyplním (['"]?)(.+)\1 do pole (.+)$/
+	 */
+	public function fillInputByLabel2($x, $value, $label)
+	{
+		$this->fillInputByLabel($x, $label, $value); // just different params order
+	}
 
 
 	/**
