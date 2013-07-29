@@ -62,6 +62,9 @@ class ScreenshotMaker implements EventSubscriberInterface
 		$this->enabled = (bool) getenv('MAKE_SCREENSHOTS'); // false - not set, i.e. default
 		if (!$this->enabled) return;
 
+		if (!is_dir($outDir)) {
+			mkdir($outDir, 0777, TRUE);
+		}
 		Tester\Helpers::purge($outDir);
 
 		$this->outDir = $outDir;
