@@ -31,8 +31,8 @@
 				<td colspan="3">
 					<ul>
 						<li n:foreach="$item['steps'] as $stepResult">
-							<a href="{$stepResult['file']}" rel="g_{$numScenario}">
-								<img src="{= substr($stepResult['file'], 0, -4) . '.thumb.png'}" class="{$stepResult['result']|resultClass}" title="{$stepResult['text']}" width="120" />
+							<a href="{$stepResult['file']}" rel="g_{$numScenario}" title="{$stepResult['text']}">
+								<img src="{= substr($stepResult['file'], 0, -4) . '.thumb.png'}" class="{$stepResult['result']|resultClass}" alt='' width="120" />
 							</a>
 						</li>
 					</ul>
@@ -47,7 +47,13 @@
 	$(function() {
 		$(".screenshots a").fancybox({
 			autoCenter: true,
-			helpers: { buttons: { position: 'top' } }
+			helpers: {
+				buttons: { position: 'top' },
+				title: {
+					type: 'inside',
+					position: 'bottom'
+				}
+			}
 		});
 	});
 	</script>
