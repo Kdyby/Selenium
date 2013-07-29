@@ -85,6 +85,7 @@ class DefinitionLoader implements LoaderInterface
 	{
 		foreach ($this->sitemap->findClasses() as $className) {
 			$reflection = new \ReflectionClass($className);
+			if ($reflection->isSubclassOf('Behat\Behat\Context\BehatContext')) continue;
 
 			foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $methodRefl) {
 				if ($methodRefl->getDeclaringClass() != $reflection) continue; // only own methods; intentionally != because reflection is not identical
