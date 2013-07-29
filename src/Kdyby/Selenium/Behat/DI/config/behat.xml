@@ -5,7 +5,7 @@
 
 	<parameters>
 		<parameter key="behat.paths.sitemap">%behat.paths.base%/features</parameter>
-		<parameter key="behat.paths.reports">%behat.paths.base%/out</parameter>
+		<parameter key="behat.paths.reports">%behat.paths.base%/log/out</parameter>
 	</parameters>
 
 	<services>
