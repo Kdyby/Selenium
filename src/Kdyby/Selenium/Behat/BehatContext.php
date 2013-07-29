@@ -148,8 +148,8 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 */
 	public function run($className, $methodName, $values)
 	{
-		if ($this->stack[0] instanceof $className) { // current object is good enough
-			$page = $this->stack[0];
+		if ($this->getCurrentPage() instanceof $className) { // current object is good enough
+			$page = $this->getCurrentPage();
 
 		} elseif ($page = $this->getPageObject($className)) {
 			// nothing
@@ -168,11 +168,11 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 				throw new \RuntimeException("Router didn't match the url " . $this->getSession()->url());
 			}
 
-			if (!$this->stack[0] instanceof $className) {
+			if (!$this->getCurrentPage() instanceof $className) {
 				$this->pushPage(new $className($this->getSession()));
 			}
 
-		} elseif ($ret !== $this->stack[0] && $ret instanceof PageElement) {
+		} elseif ($ret !== $this->getCurrentPage() && $ret instanceof PageElement) {
 			$this->pushPage($ret);
 		}
 	}
@@ -197,9 +197,30 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	}
 
 
+
+	/**
+	 * @return PageElement
+	 */
+	public function getCurrentPage()
+	{
+		return $this->stack[0];
+	}
+
+
+
+	/**
+	 * @return array|PageElement[]
+	 */
+	public function getPageHistory()
+	{
+		return $this->stack;
+	}
+
+
+
 	public function getPageObject($className)
 	{
-		return $this->pageObjects[$className];
+		return !empty($this->pageObjects[$className]) ? $this->pageObjects[$className] : NULL;
 	}
 
 
@@ -220,7 +241,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 */
 	public function willSeeComponent($type, $componentName)
 	{
-		$page = $this->stack[0];
+		$page = $this->getCurrentPage();
 
 		switch ($type) {
 			case 'komponentu':
@@ -255,7 +276,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 */
 	public function wontSeeComponent($type, $componentName)
 	{
-		$page = $this->stack[0];
+		$page = $this->getCurrentPage();
 
 		switch ($type) {
 			case 'komponentu':
@@ -310,7 +331,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 			throw new \RuntimeException("Router didn't match the url " . $this->getSession()->url());
 		}
 
-		if (!$this->stack[0] instanceof $className) {
+		if (!$this->getCurrentPage() instanceof $className) {
 			$this->pushPage(new $className($this->getSession()));
 		}
 
