@@ -27,6 +27,8 @@ use Tester;
  */
 class ScreenshotMaker implements EventSubscriberInterface
 {
+	/** @var array Results that shall be ignored (it makes no sense to capture screenshots here) */
+	public $ignoredStates = array(StepEvent::SKIPPED, StepEvent::UNDEFINED);
 
 	/** @var bool */
 	private $enabled;
@@ -145,6 +147,8 @@ class ScreenshotMaker implements EventSubscriberInterface
 	public function afterStep(StepEvent $event)
 	{
 		if (!$this->enabled) return;
+
+		if (in_array($event->getResult(), $this->ignoredStates)) return; // screenshot not needed for these states
 
 		$file = $event->getStep()->getParent()->getFeature()->getFile();
 		$line = $event->getStep()->getLine();
