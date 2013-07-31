@@ -55,8 +55,8 @@ class Bootstrap
 	public static function registerPanel()
 	{
 		$testCaseRefl = new \ReflectionClass('\PHPUnit_Extensions_Selenium2TestCase');
-		Debugger::$blueScreen->collapsePaths[] = dirname($testCaseRefl->getFileName());
-		Debugger::$blueScreen->addPanel(array($panel = new Diagnostics\Panel(), 'renderException'));
+		self::getDebuggerBlueScreen()->collapsePaths[] = dirname($testCaseRefl->getFileName());
+		self::getDebuggerBlueScreen()->addPanel(array($panel = new Diagnostics\Panel(), 'renderException'));
 		return $panel;
 	}
 
@@ -105,6 +105,16 @@ class Bootstrap
 		});
 
 		return $testDbName;
+	}
+
+
+
+	/**
+	 * @return Nette\Diagnostics\BlueScreen
+	 */
+	private static function getDebuggerBlueScreen()
+	{
+		return method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Debugger::getBlueScreen() : Debugger::$blueScreen;
 	}
 
 }
