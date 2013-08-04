@@ -144,7 +144,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 * @param string $className
 	 * @param string $methodName
 	 * @param array $values
-	 * @throws Nette\InvalidStateException
+	 * @throws \RuntimeException
 	 */
 	public function run($className, $methodName, $values)
 	{
@@ -155,9 +155,11 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 			// nothing
 			// is this valid anyway? because we're accessing an object which is no longer current in stack
 
-		} else {
-			throw new \Nette\InvalidStateException("Not found page object of class $className");
+		} elseif (Nette\Reflection\ClassType::from($className)->isSubclassOf('Kdyby\Selenium\PageElement')) {
+			$this->pushPage($page = new $className($this->getSession()));
 
+		} else {
+			throw new \RuntimeException("Not found page object of class $className");
 		}
 
 		// dispatch
@@ -286,7 +288,7 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 				} elseif ($page instanceof PageElement) {
 					if ($page->tryFindComponent($componentName)) Assert::fail("Komponenta '$componentName' byla nalezena");
 
-				} else throw new \Nette\InvalidStateException;
+				} else throw new Nette\InvalidStateException;
 				break;
 
 			case 'stránku':
