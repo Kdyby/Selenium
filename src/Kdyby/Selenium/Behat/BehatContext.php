@@ -306,6 +306,8 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 	 */
 	public function clickButton($type, $text)
 	{
+		$text = trim($text);
+
 		switch ($type) {
 			case 'tlačítko':
 				$buttons = $this->getSession()->elements($this->getSession()->using('xpath')->value("//input[@type='submit'][@value='$text']"));
