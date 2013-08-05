@@ -168,14 +168,17 @@ class SeleniumContext extends Nette\Object
 	 * @param string $destination
 	 * @return BrowserSession
 	 */
-	public function openConcurrentSession($destination)
+	public function openConcurrentSession($destination = NULL)
 	{
 		$this->windows[] = $this->currentSession = $this->sessionFactory->create();
 		$this->currentSession->setContext($this);
 
-		$args = func_get_args();
+		if ($destination) {
+			$args = func_get_args();
+			call_user_func_array(array($this->currentSession, 'presenter'), $args);
+		}
 
-		return call_user_func_array(array($this->currentSession, 'presenter'), $args);
+		return $this->currentSession;
 	}
 
 
