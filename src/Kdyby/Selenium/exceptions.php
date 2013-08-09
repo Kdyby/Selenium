@@ -39,3 +39,13 @@ class HttpServerException extends \RuntimeException implements Exception
 {
 
 }
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class JavascriptEvaluationException extends \RuntimeException implements Exception
+{
+
+}

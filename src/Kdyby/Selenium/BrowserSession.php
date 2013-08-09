@@ -178,6 +178,7 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 				'script' => 'return jQuery.active == 0;',
 				'args' => array(),
 			));
+
 			usleep(250);
 			if (!$finished) {
 				$wasWaiting = TRUE;
@@ -192,6 +193,27 @@ class BrowserSession extends \PHPUnit_Extensions_Selenium2TestCase_Session
 		}
 
 		return $this;
+	}
+
+
+
+	/**
+	 * @param array $script
+	 * @return string|void
+	 * @throws JavascriptEvaluationException
+	 */
+	public function execute($script)
+	{
+		try {
+			return $this->__call('execute', array($script));
+
+		} catch (\Exception $e) {
+			$scriptTextual = "<script>\n" .
+				'/** args= ' . Nette\Utils\Json::encode($script['args']) . " */\n" . $script['script'] .
+				"\n</script>";
+
+			throw new JavascriptEvaluationException("Evaluation of script failed\n$scriptTextual\n\n" . $e->getMessage(), $e->getCode(), $e);
+		}
 	}
 
 
