@@ -11,6 +11,8 @@ if [ ! -f "$dir/$SERVER_FILE" ]; then
     wget http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar --progress=dot -e dotbytes=5M -O "$dir/$SERVER_FILE"
 fi
 
+SELENIUM_ARGS="-Dwebdriver.enable.native.events=1"
+
 echo "[Kdyby] Launching selenium server..."
 if [ -x "$(which Xephyr)" ]; then # apt-get install xserver-xephyr fvwm
 	echo "[Kdyby] launching Xephyr"
@@ -21,7 +23,7 @@ if [ -x "$(which Xephyr)" ]; then # apt-get install xserver-xephyr fvwm
 	sleep 3
 	fvwm &
 	sleep 1
-	java -jar "$dir/$SERVER_FILE" 2>&1 &
+	java -jar "$dir/$SERVER_FILE" $SELENIUM_ARGS 2>&1 &
 
 elif [ -x "$(which Xnest)" ] ; then # apt-get install xnest fvwm
 	echo "[Kdyby] launching Xnest"
@@ -33,18 +35,18 @@ elif [ -x "$(which Xnest)" ] ; then # apt-get install xnest fvwm
 	sleep 2
 	fvwm &
 	sleep 1
-	java -jar "$dir/$SERVER_FILE" 2>&1 &
+	java -jar "$dir/$SERVER_FILE" $SELENIUM_ARGS 2>&1 &
 
 elif [ -x "$(which xvfb-run)" ]; then # apt-get install xvfb
 	echo "[Kdyby] launching Xvfb"
 
 	export AUTHFILE=$(tempfile -n "$dir/Xauthority")
-	xvfb-run --auto-servernum --server-num=1 -e /dev/stdout --server-args="-screen 1, 1024x768x24" java -jar "$dir/$SERVER_FILE" 2>&1 &
+	xvfb-run --auto-servernum --server-num=1 -e /dev/stdout --server-args="-screen 1, 1024x768x24" java -jar "$dir/$SERVER_FILE" $SELENIUM_ARGS 2>&1 &
 
 else
 	echo "[Kdyby] found nothing to cage selenium browsers in, prepare for your focus to be stolen!"
 
-	java -jar "$dir/$SERVER_FILE" 2>&1 &
+	java -jar "$dir/$SERVER_FILE" $SELENIUM_ARGS 2>&1 &
 fi
 
 echo "[Kdyby] Waiting for selenium to boot up"
