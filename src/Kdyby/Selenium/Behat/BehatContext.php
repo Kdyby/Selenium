@@ -151,10 +151,6 @@ class BehatContext extends Behat\Behat\Context\BehatContext
 		if ($this->getCurrentPage() instanceof $className) { // current object is good enough
 			$page = $this->getCurrentPage();
 
-		} elseif ($page = $this->getPageObject($className)) {
-			// nothing
-			// is this valid anyway? because we're accessing an object which is no longer current in stack
-
 		} elseif (Nette\Reflection\ClassType::from($className)->isSubclassOf('Kdyby\Selenium\PageElement')) {
 			$this->pushPage($page = new $className($this->getSession()));
 
