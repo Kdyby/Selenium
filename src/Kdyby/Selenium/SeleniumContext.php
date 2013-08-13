@@ -29,7 +29,7 @@ class SeleniumContext extends Nette\Object
 	const OPTION_CONCURRENCY = 'seleniumConcurrency';
 	const OPTION_BROWSER = 'browserName';
 	const OPTION_ROUTER = 'routerPath';
-	const OPTION_ENV_PREFIX = 'KDYBY';
+	const OPTION_ENV_PREFIX = 'environmentPrefix';
 	const OPTION_ENV_VARIABLES = 'environmentVariables';
 	const OPTION_VIDEO_ENABLE = 'videoEnable';
 
