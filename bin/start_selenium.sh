@@ -8,7 +8,7 @@ dir=$(cd `dirname $0` && pwd)
 # download selenium
 SERVER_FILE=selenium-server-standalone.jar
 if [ ! -f "$dir/$SERVER_FILE" ]; then
-    wget http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar --progress=dot -e dotbytes=5M -O "$dir/$SERVER_FILE"
+    wget http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar --progress=dot -e dotbytes=5M -O "$dir/$SERVER_FILE"
 fi
 
 SELENIUM_ARGS="-Dwebdriver.enable.native.events=1"
