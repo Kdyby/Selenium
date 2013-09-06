@@ -26,6 +26,7 @@ class Bootstrap
 	public static function setup($rootDir)
 	{
 		// configure environment
+		umask(0);
 		Tester\Helpers::setup();
 		class_alias('Tester\Assert', 'Assert');
 		date_default_timezone_set('Europe/Prague');
@@ -33,6 +34,7 @@ class Bootstrap
 		// create temporary directory
 		define('TEMP_DIR', $rootDir . '/tmp/' . (isset($_SERVER['argv']) ? md5(serialize($_SERVER['argv'])) : getmypid()));
 		Tester\Helpers::purge(TEMP_DIR);
+		@chmod(TEMP_DIR, 0777);
 		Nette\Diagnostics\Debugger::$logDirectory = TEMP_DIR;
 
 		$_SERVER = array_intersect_key($_SERVER, array_flip(array(

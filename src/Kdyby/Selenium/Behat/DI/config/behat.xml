@@ -25,5 +25,9 @@
 			<argument>%behat.paths.base%</argument>
 			<tag name="behat.event_subscriber" priority="1" />
 		</service>
+
+		<service id="behat.selenium.tracyWatcher" class="Kdyby\Selenium\Behat\TracyWatcher">
+			<tag name="behat.event_subscriber" priority="1" />
+		</service>
     </services>
 </container>
