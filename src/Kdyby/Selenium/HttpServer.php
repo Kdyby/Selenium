@@ -13,6 +13,7 @@ namespace Kdyby\Selenium;
 use Kdyby;
 use Nette;
 use Nette\Http\UrlScript;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 
 
@@ -95,7 +96,8 @@ class HttpServer
 			} while (!flock($lock, LOCK_EX | LOCK_NB, $wouldBlock) || $wouldBlock);
 		}
 
-		$cmd = sprintf('php -t %s -S %s:%d %s', escapeshellarg(dirname($router)), $ip = '127.0.0.1', $port, escapeshellarg($router));
+		$executable = new PhpExecutableFinder();
+		$cmd = sprintf('%s -t %s -S %s:%d %s', escapeshellcmd($executable->find()), escapeshellarg(dirname($router)), $ip = '127.0.0.1', $port, escapeshellarg($router));
 		if (!is_resource($this->process = proc_open($cmd, self::$spec, $this->pipes, dirname($router), $env + $_ENV))) {
 			throw new HttpServerException("Could not execute: `$cmd`");
 		}

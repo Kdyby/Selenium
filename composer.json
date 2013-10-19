@@ -24,7 +24,8 @@
 		"nette/nette": "@dev",
 		"nette/tester": "@dev",
 		"phpunit/phpunit-selenium": "@dev",
-		"behat/behat": "@stable"
+		"behat/behat": "@stable",
+		"symfony/process": "~2.3"
 	},
 	"autoload": {
 		"psr-0": {
