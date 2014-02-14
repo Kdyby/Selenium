@@ -27,7 +27,7 @@ class Bootstrap
 	{
 		// configure environment
 		umask(0);
-		Tester\Helpers::setup();
+		Tester\Environment::setup();
 		class_alias('Tester\Assert', 'Assert');
 		date_default_timezone_set('Europe/Prague');
 
