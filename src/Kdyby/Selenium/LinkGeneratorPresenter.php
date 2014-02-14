@@ -25,7 +25,7 @@ class LinkGeneratorPresenter extends Nette\Application\UI\Presenter
 	{
 		parent::__construct();
 		$sl->callInjects($this);
-		$this->run(new Nette\Application\Request('Front:LinkGenerator', 'GET', array()));
+		$this->run(new Nette\Application\Request('Front:LinkGenerator', 'GET', array('action' => 'default')));
 	}
 
 
