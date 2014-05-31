@@ -3,7 +3,7 @@ Kdyby/Selenium
 
 [![Build Status](https://travis-ci.org/Kdyby/Selenium.svg?branch=master)](https://travis-ci.org/Kdyby/Selenium)
 [![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Selenium.svg)](https://packagist.org/packages/Kdyby/Selenium)
-[![Latest stable](img.shields.io/packagist/v/Kdyby/Selenium.svg)](https://packagist.org/packages/Kdyby/Selenium)
+[![Latest stable](https://img.shields.io/packagist/v/Kdyby/Selenium.svg)](https://packagist.org/packages/Kdyby/Selenium)
 
 
 Requirements
