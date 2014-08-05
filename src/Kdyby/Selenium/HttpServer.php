@@ -96,8 +96,16 @@ class HttpServer
 			} while (!flock($lock, LOCK_EX | LOCK_NB, $wouldBlock) || $wouldBlock);
 		}
 
+		$ini = NULL;
+		if (($pid = getmypid()) && ($myprocess = `ps -ww -fp $pid`)) {
+			$fullArgs = preg_split('~[ \\t]+~', explode("\n", $myprocess)[1], 8)[7];
+			if (preg_match('~\\s\\-c\\s(?P<ini>[^ \\t]+)\\s~i', $fullArgs, $m)) {
+				$ini = '-c ' . $m['ini'] . ' -n';
+			}
+		}
+
 		$executable = new PhpExecutableFinder();
-		$cmd = sprintf('%s -t %s -S %s:%d %s', escapeshellcmd($executable->find()), escapeshellarg(dirname($router)), $ip = '127.0.0.1', $port, escapeshellarg($router));
+		$cmd = sprintf('%s %s -d register_argc_argv=on -t %s -S %s:%d %s', escapeshellcmd($executable->find()), $ini, escapeshellarg(dirname($router)), $ip = '127.0.0.1', $port, escapeshellarg($router));
 		if (!is_resource($this->process = proc_open($cmd, self::$spec, $this->pipes, dirname($router), $env))) {
 			throw new HttpServerException("Could not execute: `$cmd`");
 		}
