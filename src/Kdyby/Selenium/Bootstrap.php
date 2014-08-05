@@ -87,12 +87,12 @@ class Bootstrap
 
 
 
-	public static function setupDoctrineDatabase(Nette\DI\Container $sl, $sqls = array(), $prefix = 'kdyby')
+	public static function setupDoctrineDatabase(Nette\DI\Container $sl, $sqls = array(), $prefix = 'kdyby', $id = NULL)
 	{
 		$db = $sl->getByType('Kdyby\Doctrine\Connection'); // default connection
 		/** @var \Kdyby\Doctrine\Connection $db */
 
-		$testDbName = $prefix . '_test_' . getmypid();
+		$testDbName = $prefix . '_test_' . ($id ?: getmypid());
 		$db->exec("DROP DATABASE IF EXISTS `$testDbName`");
 		$db->exec("CREATE DATABASE `$testDbName`");
 		$db->exec("USE `$testDbName`");
